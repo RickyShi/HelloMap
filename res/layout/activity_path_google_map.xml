@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TaskRoadMap"
+    android:orientation="vertical" >
+	
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+		
+		<Button 
+	        android:id="@+id/btnPathText"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+		    android:layout_width="0dp"
+		    android:text="textPath"
+		    android:onClick="showPath"/>   
+		    
+		<Button 
+	        android:id="@+id/btnPath"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+		    android:layout_width="0dp"
+		    android:text="mapPath"
+		    android:onClick="showPath"/> 
+	    
+    </LinearLayout>
+
+   	<fragment
+   	    android:id="@+id/map"
+   	    android:layout_below="@id/linearLayout"
+   	    android:name="com.google.android.gms.maps.MapFragment"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="match_parent" />
+
+   	<!-- class="com.google.android.gms.maps.SupportMapFragment" -->
+
+</RelativeLayout>
