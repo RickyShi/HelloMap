@@ -7,12 +7,15 @@ import java.util.List;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -30,16 +33,16 @@ public class PathGoogleMapActivity extends Activity {
 	GoogleMap googleMap;
 	ArrayList<LatLng> latLngArr;
 	final String TAG = "PathGoogleMapActivity";
+	HttpUtils httpUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_path_google_map);
+		httpUtils = new HttpUtils(getApplicationContext());
+		if (httpUtils.checkDataConnectivity()){
 		googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 				.getMap();
-//		SupportMapFragment fm = (SupportMapFragment) getSupportFragmentManager()
-//				.findFragmentById(R.id.map);
-//		googleMap = fm.getMap();
 		latLngArr = new ArrayList<LatLng>();
 		MarkerOptions options = new MarkerOptions();
 		options.position(LOWER_MANHATTAN);
@@ -49,13 +52,10 @@ public class PathGoogleMapActivity extends Activity {
 		googleMap.addMarker(options);
 		latLngArr.add(WALL_STREET);
 		latLngArr.add(EMPIRE_BLDG);
-//		String url = getMapsApiDirectionsUrl(LOWER_MANHATTAN,BROOKLYN_BRIDGE,latLngArr);
-//		ReadTask downloadTask = new ReadTask();
-//		downloadTask.execute(url);
-//
-//		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BROOKLYN_BRIDGE,13));
-//		addMarkers();
-
+		googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BROOKLYN_BRIDGE,13));
+		} else {
+			makeToast(this);
+		}
 	}
 
 	private String getMapsApiDirectionsUrl(LatLng ori,LatLng dest, ArrayList<LatLng> wayPointsLst) {
@@ -160,6 +160,7 @@ public class PathGoogleMapActivity extends Activity {
 				polyLineOptions.addAll(points);
 				polyLineOptions.width(5);
 				polyLineOptions.color(Color.BLUE);
+				
 			}
 
 			googleMap.addPolyline(polyLineOptions);
@@ -174,6 +175,7 @@ public class PathGoogleMapActivity extends Activity {
 			try {
 				HttpConnection http = new HttpConnection();
 				data = http.readUrl(url[0]);
+				Log.d("ricky","data: "+data);
 			} catch (Exception e) {
 				Log.d("Background Task", e.toString());
 			}
@@ -218,18 +220,25 @@ public class PathGoogleMapActivity extends Activity {
 	}
 	public void showPath(View view){
 		int id = view.getId();
-
-		if (id == R.id.btnPath) {
-			String url = getMapsApiDirectionsUrl(LOWER_MANHATTAN,BROOKLYN_BRIDGE,latLngArr);
-			ReadTask downloadTask = new ReadTask();
-			downloadTask.execute(url);
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BROOKLYN_BRIDGE,13));
-			addMarkers();
-			
-		} else if (id == R.id.btnPathText) {
-			String url = getMapsApiDirectionsUrl(LOWER_MANHATTAN,BROOKLYN_BRIDGE,latLngArr);
-			TextRouteTask downloadTask = new TextRouteTask();
-			downloadTask.execute(url);
+		if (httpUtils.checkDataConnectivity()){
+			if (id == R.id.btnPath) {
+				String url = getMapsApiDirectionsUrl(LOWER_MANHATTAN,BROOKLYN_BRIDGE,latLngArr);
+				ReadTask downloadTask = new ReadTask();
+				downloadTask.execute(url);
+				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(BROOKLYN_BRIDGE,13));
+				addMarkers();
+				
+			} else if (id == R.id.btnPathText) {
+				String url = getMapsApiDirectionsUrl(LOWER_MANHATTAN,BROOKLYN_BRIDGE,latLngArr);
+				TextRouteTask downloadTask = new TextRouteTask();
+				downloadTask.execute(url);
+			}
+		} else {
+			makeToast(this);
 		}
+	}
+	
+	private void makeToast(Context context){
+		Toast.makeText(context, "Network Connection is not established", Toast.LENGTH_LONG).show();
 	}
 }

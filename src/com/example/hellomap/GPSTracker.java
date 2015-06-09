@@ -43,7 +43,7 @@ public class GPSTracker extends Service implements LocationListener {
     int geocoderMaxResults = 1;
 
     // The minimum distance to change updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 5 meters
 
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
@@ -102,7 +102,7 @@ public class GPSTracker extends Service implements LocationListener {
             } 
 
             // Application can use GPS or Network Provider
-            if (!provider_info.isEmpty()) {
+            if (provider_info!=null) {
                 locationManager.requestLocationUpdates(
                     provider_info,
                     MIN_TIME_BW_UPDATES,
