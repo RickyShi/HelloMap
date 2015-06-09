@@ -47,7 +47,7 @@ public class MapPaneActivity extends Activity {
 
 		// // Move the camera instantly to DISH with a zoom of 15.
 		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DISH, ZOOM_LEVEL));
-		
+		//Geocoder Log test:
 		Geocoder geoCoder = new Geocoder(this,Locale.ENGLISH);
 		try {
 			List<Address> addrLst = geoCoder.getFromLocationName(ADD1, 1);
